@@ -1,72 +1,56 @@
-$(document).ready(function() {
-    var topic1 = $("#Topic").val();
-    $("#btnDisconnect").click(function() {
-        //  $("button").attr("disable", true);
-        Swal.fire({
-            title: 'Are you sure you want to disconnect?',
-            text: "You wont receive any message from the broker!",
-            type: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes'
-          }).then((result) => {
-            if (result.value) {
-              Swal.fire(
-                'Disconnect!',
-                'You have been disconnect.',
-                'success',
-                client.end(),
-                location.reload()
-              )
-            }
-          })
-    })
-    
-    $("#btnConnect").click(function() {
-        //$("button").attr("disable", false);
-        // console.log($("#Address").val());
-        client = mqtt.connect($("#Address").val())
+$(document).ready(function () {
+  client = mqtt.connect("wss://test.mosquitto.org:8081/mqtt");
+  client.on("connect", function () {
+    $("#level").val("The fan is currently turned off");
+  })
+  $("#offButton").click(function () {
+    $("#level").val("The fan is currently turned off");
+    var topic = "cherry/fan/status";
+    var payload ="Turned Off";
 
-        client.on("connect", function() {
-            $("#checkStatus").val("Connected !");
-            Swal.fire({
-                position: 'center',
-                type: 'success',
-                title: 'Successfully Connected',
-                showConfirmButton: false,
-                timer: 1500
-              })
-        })
-        subs = false;
-        $("#btnPublish").click(function() {
-            var topic = $("#Topic").val();
-            var payload = $("#Payload").val();
-            var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-            $("#tbpublish").append(row);
-            subs = true;
+    client.publish(topic, payload)
+  })
 
-            client.publish(topic, payload)
-        })
-        client.on("message", function(topic, payload) {
-            var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-            $("#tbbroker").append(row);
-        })
+  client.on("message", function (topic, payload) {
+    var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+    $("#tbbroker").append(row);
+  })
 
-        $("#btnSubscribe").click(function() {
-            var topic = $("#SubTopic").val();
-            var row = "<tr><td>" + topic + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
-            $("#tbsubscribe").append(row);
+  $("#1Button").click(function () {
+    $("#level").val("The fan is currently turned at 1");
+    var topic = "cherry/fan/status";
+    var payload = "Turned at 1";
 
-            client.subscribe(topic)     
-        })
-        
-        $("#btnUnsubscribe").click(function() {
-            var topic = $("#SubTopic").val();
-            client.unsubscribe(topic)
-            topic1 = "";
+    client.publish(topic, payload)
+  })
+  client.on("message", function (topic, payload) {
+    var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+    $("#tbbroker").append(row);
+  })
 
-        })
+  $("#2Button").click(function () {
+    $("#level").val("The fan is currently turned at 2");
+    var topic = "cherry/fan/status";
+    var payload = "Turned at 2";
 
-    })
+    client.publish(topic, payload)
+  })
+  client.on("message", function (topic, payload) {
+    var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+    $("#tbbroker").append(row);
+  })
+
+  $("#3Button").click(function () {
+    $("#level").val("The fan is currently turned at 3");
+    var topic = "cherry/fan/status";
+    var payload = "Turned at 3";
+
+
+    client.publish(topic, payload)
+  })
+  client.on("message", function (topic, payload) {
+    var row = "<tr><td>" + topic + "</td><td>" + payload + "</td><td>" + moment().format('MMMM Do YYYY, h:mm:ss a') + "</td></tr>";
+    $("#tbbroker").append(row);
+  })
+
 })
